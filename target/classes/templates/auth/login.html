@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+    <header th:insert="blocks/header"></header>
+    <section class="login">
+        <form class="form" th:action="@{/login}" method="post">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+            <h2 class="form-head">Авторизация</h2>
+            <input class="input-field" type="text" placeholder="Почта" name="username">
+            <input class="input-field" type="password" placeholder="Пароль" name="password">
+            <button class="submit-button" type="submit">Войти</button>
+            <p class="form-footer">
+                <a th:href="@{/registration}">Нет аккаунта?</a>
+            </p>
+        </form>
+    </section>
+    <footer th:insert="blocks/footer"></footer>
+</body>
+</html>

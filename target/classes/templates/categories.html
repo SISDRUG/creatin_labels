@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DYL</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/categories.css}">
+</head>
+<body>
+    <header th:insert="blocks/header"></header>
+    <section class="categories">
+        <div class="categories__cards" th:each="category : ${categoryList}">
+            <a th:href="@{/category/{id}(id=${category.id})}">
+                <div class="categories__card">
+                    <div class="categories__card__img-wrapper">
+                        <img th:src="@{${category.image.path + category.image.fileName}}" alt="водка">
+                    </div>
+                    <p class="categories__card__text" th:text="${category.name}"></p>
+                </div>
+            </a>
+        </div>
+    </section>
+    <footer th:insert="blocks/footer"></footer>
+</body>
+</html>

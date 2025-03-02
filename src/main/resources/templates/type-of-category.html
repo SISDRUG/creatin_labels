@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DYL</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/type-of-categories.css}">
+</head>
+<body>
+    <header th:insert="blocks/header"></header>
+    <section class="types">
+        <h2 class="types__header" th:text="${category.name}"></h2>
+        <div class="types__cards" th:each="typeOfCategory : ${category.typesOfCategory}">
+            <div class="types__card">
+<!--                Потом добавить id-->
+                <a th:href="@{/creating-label/{id}(id=${typeOfCategory.id})}">
+                    <div class="types__card__img-wrapper">
+                        <img th:src="@{${typeOfCategory.image.path + typeOfCategory.image.fileName}}" alt="картинка">
+                    </div>
+                    <h3 class="types__card__head" th:text="${typeOfCategory.title}"></h3>
+                    <p class="types__card__text" th:text="${typeOfCategory.text}"></p>
+                </a>
+            </div>
+        </div>
+    </section>
+    <section class="description">
+        <p class="description__text" th:text="${category.text}"></p>
+    </section>
+    <section class="images">
+        <div class="images__img-wrapper images__img-wrapper--filter">
+            <img th:src="@{/img/images-1.png}" alt="">
+        </div>
+        <div class="images__img-wrapper">
+            <img th:src="@{/img/images-2.png}" alt="">
+        </div>
+        <div class="images__img-wrapper images__img-wrapper--filter">
+            <img th:src="@{/img/images-3.png}" alt="">
+        </div>
+    </section>
+    <footer th:insert="blocks/footer"></footer>
+</body>
+</html>

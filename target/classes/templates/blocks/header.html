@@ -1,0 +1,53 @@
+<div class="header" th:fragment="header">
+    <h1 class="logo-wrapper">
+        <a th:href="@{/}">
+            <svg class="logo" viewBox="0 0 133 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.0887 65.8204L14.5742 78.9586C14.3649 59.4563 14.1514 39.9582 13.9336 20.4645L21.1086 20.6587C21.4332 35.7126 21.7599 50.7665 22.0887 65.8204Z" fill="#432918"/>
+                <path d="M58.252 47.2457C58.7709 64.4483 27.6622 77.4636 20.9933 80.253C19.9362 80.6996 16.1053 82.1946 11.89 83.832C6.8611 85.7736 0.166572 88.3042 1.00606e-05 87.9417C-0.461239 86.9062 55.8624 69.2829 54.4531 48.909C54.0495 43.0001 49.1807 37.9066 47.246 35.9003C36.2657 24.4513 15.7914 21.3577 16.0156 20.8593C16.297 20.7587 16.5897 20.6935 16.8869 20.6651L20.6281 20.471C23.9722 20.3027 57.7202 29.5383 58.252 47.2457Z" fill="#432918"/>
+                <path d="M76.2343 52.2551L69.527 51.7761L84.4535 20.458L91.9232 21.047L76.2343 52.2551Z" fill="#432918"/>
+                <path d="M76.2343 68.2474C74.9958 72.3679 73.7572 76.4992 72.5187 80.6413C71.0837 76.551 69.6465 72.4521 68.2073 68.3445V51.5172H76.2343V68.2474Z" fill="#432918"/>
+                <path d="M107.791 80.6413H97.4646V20.4904L99.6427 21.7848L107.791 80.6413Z" fill="#432918"/>
+                <path d="M122.109 80.6413H97.4646V72.5189C118.893 74.3699 127.574 73.0626 131.021 71.0692C131.341 70.888 132.84 69.9884 132.987 70.2473C133.295 70.7974 127.382 76.0785 122.109 80.6413Z" fill="#432918"/>
+                <path d="M68.2201 52.1644L74.7865 51.7761L59.828 20.471L52.5312 20.9758L68.2201 52.1644Z" fill="#432918"/>
+            </svg>
+        </a>
+    </h1>
+    <nav class="nav-wrapper content-container">
+        <li>
+            <a class="nav-link" th:href="@{/category}">
+                <div class="nav__categories-wrapper">
+                    <img th:src="@{/img/categories.png}" alt="Категории">
+                </div>
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" th:href="@{/category}">
+                Шаблоны
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" th:href="@{/category}">
+                Создать этикетку
+            </a>
+        </li>
+        <li>
+            <a class="nav-link" th:href="@{/reviews}">
+                Отзывы
+            </a>
+        </li>
+        <li th:unless="${@authService.isAuthenticated()}">
+            <a class="nav-link" th:href="@{/login}">
+                Войти
+            </a>
+        </li>
+        <li th:if="${@authService.isAuthenticated()}">
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+<!--                <input class="nav-link nav-link&#45;&#45;button" type="submit" value="Выйти">-->
+                <button class="nav-link--button" type="submit">
+                    <span class="nav-link">Выйти</span>
+                </button>
+            </form>
+        </li>
+    </nav>
+</div>

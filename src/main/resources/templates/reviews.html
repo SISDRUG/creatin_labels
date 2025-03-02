@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/reviews.css}">
+</head>
+<body>
+    <header th:insert="blocks/header"></header>
+    <section class="reviews">
+        <div class="reviews__list" th:each="review : ${reviews}">
+            <div class="reviews__card">
+                <h3 class="reviews__card__head" th:text="${review.user.name}"></h3>
+                <p class="reviews__card__text" th:text="${review.text}"></p>
+            </div>
+        </div>
+    </section>
+    <section class="review-send">
+        <form th:action="@{/reviews}" method="post">
+            <div class="review-send__textarea-wpapper">
+                <textarea  class="review-send__textarea" placeholder="Коментарий" name="text" id=""></textarea>
+            </div>
+            <button class="submit-button submit-button--textarea" type="submit">Отставить отзыв</button>
+        </form>
+    </section>
+    <footer th:insert="blocks/footer"></footer>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/registration.css}">
+</head>
+<body>
+    <header th:insert="blocks/header"></header>
+    <section class="registration">
+        <form class="form" th:action="@{/registration}" method="post">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+            <h2 class="form-head">Регистрация</h2>
+            <input class="input-field" type="text" placeholder="Имя пользователя" name="name">
+            <input class="input-field" type="text" placeholder="Почта" name="email">
+            <input class="input-field" type="password" placeholder="Пароль" name="password">
+            <input class="input-field" type="password" placeholder="Повторите пароль" name="confirmed password">
+            <button class="submit-button" type="submit">Зарегестрироваться</button>
+            <p class="form-footer">
+                <a th:href="@{/login}">Уже есть аккаунт?</a>
+            </p>
+        </form>
+    </section>
+    <section class="registration-img">
+        <p class="registration-img__text">
+            Хочешь сделать этикетку быстро и качественно? 
+Регистрируйся!
+        </p>
+
+    </section>
+    <footer th:insert="blocks/footer"></footer>
+</body>
+</html>

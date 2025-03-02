@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление категории</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body>
+<header th:insert="blocks/header"></header>
+<div class="container mt-5">
+    <h1 class="mb-4">Добавить категорию</h1>
+    <form th:action="@{/admin/category}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+
+        <div class="form-group">
+            <label for="name">Название категории</label>
+            <input class="form-control" type="text" id="name" placeholder="Название категории" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="text">Содержимое</label>
+            <input class="form-control" type="text" id="text" placeholder="Содержимое" name="text" required>
+        </div>
+
+        <div class="form-group">
+            <label for="file">Изображение</label>
+            <input class="form-control-file" type="file" id="file" name="file" accept="image/*" required>
+        </div>
+
+        <button class="btn" type="submit">Добавить</button>
+    </form>
+</div>
+
+<!-- Подключение Bootstrap JS и зависимостей -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

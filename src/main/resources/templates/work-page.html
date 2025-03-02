@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание этикетки</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/work-page.css}">
+    <!-- Подключаем Fabric.js напрямую -->
+    <script src="https://unpkg.com/fabric@5.2.1/dist/fabric.min.js"></script>
+</head>
+<body>
+<header th:insert="blocks/header"></header>
+<section class="work-space container">
+    <h2 class="work-space__head" th:if="${not #lists.isEmpty(images)}" th:text=${images[0].typeOfCategory.title}></h2>
+    <div class="work-space__interface">
+        <div class="work-space__interface-container">
+            <!-- Панель инструментов редактора -->
+            <div class="work-space__editor-tools">
+                <button id="add-text-btn" class="submit-button" style="margin-right: 10px;">Добавить текст</button>
+                <div class="color-picker-container">
+                    <label for="text-color">Цвет текста:</label>
+                    <input type="color" id="text-color" value="#000000"/>
+                </div>
+            </div>
+            
+            <!-- Контейнер для редактора холста -->
+            <div id="canvas-editor-root" class="work-space__canvas-container" 
+                 th:attr="data-background=${not #lists.isEmpty(images) ? images[0].image.path + images[0].image.fileName : ''}">
+                <canvas id="canvas"></canvas>
+            </div>
+            
+            <div class="work-space__control-panel">
+                <div class="work-space__img-list" th:each="imageForWork : ${images}">
+                    <button class="img-wrapper-button" th:attr="data-image-path=${imageForWork.image.path + imageForWork.image.fileName}">
+                        <img th:src="${imageForWork.image.path} + ${imageForWork.image.fileName}" alt="">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <button id="save-label-btn" class="submit-button submit-button--control-panel right-position" type="button">сохранить</button>
+    </div>
+</section>
+<footer th:insert="blocks/footer"></footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация холста
+        const canvasElement = document.getElementById('canvas');
+        const canvasContainer = document.getElementById('canvas-editor-root');
+        
+        // Задаем размеры холста
+        const canvasWidth = 560;
+        const canvasHeight = 560;
+        
+        // Создаем холст fabric.js
+        const canvas = new fabric.Canvas('canvas', {
+            width: canvasWidth,
+            height: canvasHeight,
+            backgroundColor: '#FFFFFF'
+        });
+        
+        // Определяем глобальный объект для управления холстом
+        window.canvasEditor = {
+            canvas: canvas,
+            
+            // Метод для установки фона
+            setBackgroundImage: function(imageUrl) {
+                if (!imageUrl) return;
+                
+                fabric.Image.fromURL(
+                    imageUrl,
+                    function(img) {
+                        canvas.setBackgroundImage(
+                            img,
+                            function() {
+                                canvas.renderAll();
+                            },
+                            {
+                                scaleX: canvas.width / img.width,
+                                scaleY: canvas.height / img.height
+                            }
+                        );
+                    },
+                    { crossOrigin: 'anonymous' }
+                );
+            },
+            
+            // Метод для сохранения холста как изображения
+            saveCanvas: function() {
+                const dataURL = canvas.toDataURL({
+                    format: 'png',
+                    quality: 1
+                });
+                
+                const link = document.createElement('a');
+                link.href = dataURL;
+                link.download = 'my-label.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+            
+            // Метод для добавления текста
+            addText: function() {
+                const colorPicker = document.getElementById('text-color');
+                const textColor = colorPicker ? colorPicker.value : '#000000';
+                
+                const text = new fabric.IText('Нажмите для редактирования', {
+                    left: 50,
+                    top: 50,
+                    fontFamily: 'Arial',
+                    fontSize: 24,
+                    fill: textColor
+                });
+                
+                canvas.add(text);
+                canvas.setActiveObject(text);
+                canvas.renderAll();
+            }
+        };
+        
+        // Устанавливаем начальный фон
+        if (canvasContainer) {
+            const backgroundImagePath = canvasContainer.getAttribute('data-background');
+            if (backgroundImagePath) {
+                window.canvasEditor.setBackgroundImage(backgroundImagePath);
+            }
+        }
+        
+        // Обработчики кнопок для смены фона
+        const imageButtons = document.querySelectorAll('.img-wrapper-button');
+        imageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const imagePath = this.getAttribute('data-image-path');
+                if (imagePath && window.canvasEditor) {
+                    window.canvasEditor.setBackgroundImage(imagePath);
+                }
+            });
+        });
+        
+        // Обработчик кнопки добавления текста
+        const addTextBtn = document.getElementById('add-text-btn');
+        if (addTextBtn) {
+            addTextBtn.addEventListener('click', function() {
+                if (window.canvasEditor) {
+                    window.canvasEditor.addText();
+                }
+            });
+        }
+        
+        // Обработчик кнопки сохранения
+        const saveBtn = document.getElementById('save-label-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function() {
+                if (window.canvasEditor) {
+                    window.canvasEditor.saveCanvas();
+                }
+            });
+        }
+        
+        // Изменение цвета текста при выборе в палитре
+        const colorPicker = document.getElementById('text-color');
+        if (colorPicker) {
+            colorPicker.addEventListener('change', function() {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'i-text') {
+                    activeObject.set('fill', this.value);
+                    canvas.renderAll();
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

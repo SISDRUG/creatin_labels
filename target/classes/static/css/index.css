@@ -1,0 +1,279 @@
+@font-face {
+    font-family: "JuraLight";  
+    src: url("../fonts/Jura/JuraLight.ttf") format("truetype"); 
+    font-style: normal; 
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Inter";  
+    src: url("../fonts/Inter/Inter_28pt-Thin.ttf") format("truetype"); 
+    font-style: normal; 
+    font-weight: normal;
+}
+
+
+.design-label {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 50px;
+}
+
+.design-label__row-images {
+    display: flex;
+
+    margin-right: 100px;
+}
+
+.design-label__row-images--margin-bottom {
+    margin-bottom: 15px;
+}
+
+.design-label__img-wrapper {
+    width: 270px;
+    height: 270px;
+}
+
+.design-label__img-wrapper--margin-right {
+    margin-right: 15px;
+}
+
+.design-label__text {
+    font-family: "Inter";
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 47px;
+    text-align: left;
+
+    position: relative;
+}
+
+.design-label__head {
+    font-family: "JuraLight";
+    font-size: 76px;
+    font-weight: 300;
+
+    margin-top: 45px;
+}
+
+.design-label__head-list {
+    margin-top: 20px;
+}
+
+.design-label__list {
+    margin-left: 32px;
+    list-style-type: circle;
+}
+
+.design-label__stiker {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 270px;
+    height: 270px;
+    background-image: url("../img/stiker.png");
+    background-size: cover;
+    text-align: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.design-label__stiker-text {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 36.31px;
+    margin-top: 45px;
+}
+
+.label-options {
+    background-image: url("../img/label-options__background.png");
+    background-size:initial  ;
+}
+
+.label-options__content {
+    margin: 0 90px;
+    background-color: #E8DBD1;
+
+    display: flex;
+}
+
+.label-options__card {
+    margin-top: 115px;
+    margin-bottom: 100px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.label-options__card--reverse {
+    flex-direction: column-reverse;
+}
+
+.label-options__img-wrapper {
+    width: 270px;
+    height: 270px;
+
+    margin: 0 auto;
+}
+
+.label-options__card-text {
+    position: relative;
+
+    margin: 0 30px;
+    margin-top: 20pxpx;
+
+    font-family: Jura;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 28.39px;
+    text-align: left;
+}
+
+.label-options__card-text__icon {
+    position: absolute;
+    top: -40px;
+    left: 0;
+
+    width: 40px;
+    height: 40px;
+}
+
+.label-options__card__arrow {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+.label-options__card__arrow--reverce {
+    margin-top: 0;
+    margin-bottom: 50px;
+}
+
+
+.qualites {
+    background-image: url("../img/botle__background.png");
+    background-size: cover;
+}
+
+.qualites__cards {
+    display: flex;
+    justify-content: space-around;
+}
+
+.qualites__card {
+    margin-top: 120px;
+    margin-bottom: 70px;
+}
+
+.qualites__card__img-wprapper {
+    width: 114px;
+    height: 114px;
+
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.qualites__card__text {
+    font-family: Jura;
+    font-size: 25px;
+    font-weight: 300;
+    line-height: 37.86px;
+    text-align: center;
+}
+
+.description {
+    background-color: #F8F8FB;
+    display: flow-root;
+}
+
+.description__text {
+    margin: 50px 70px;
+    font-family: Jura;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 37px;
+    text-align: center;
+}
+
+.description__text--bold {
+    font-weight: 600;
+}
+
+.line-break {
+    display: inline-block;
+}
+
+
+.suggestion {
+    display: flex;
+    justify-content: center;
+}
+
+.suggestion__cards {
+    margin-top: 145px;
+    margin-bottom: 45px;
+}
+
+.suggestion__card {
+    display: flex;
+    align-items: center;
+}
+
+.suggestion__card__img-wrapper {
+    width: 400px;
+    height: 400px;
+    margin-right: 160px;
+}
+
+.suggestion__card__img-wrapper img {
+    border-radius: 300px;
+}
+
+.suggestion__card__text-wrapper {
+    background-color: #F8F8FB; 
+    border-radius: 60px;
+    padding: 40px;
+    max-width: 600px;
+
+    display: flex;
+    align-items: center;
+
+    position: relative;
+}
+
+.suggestion__card__text {
+    font-family: Jura;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 30px;
+    text-align: left;
+}
+
+.suggestion__card__text__img-wrapper {
+    position: absolute;
+
+    height: 80px;
+    width: 80px;
+    top: -25px;
+    left: -25px;
+}
+
+.suggestion__card--reverce {
+    flex-direction: row-reverse;
+}
+
+.suggestion__card__img-wrapper--reverce {
+    margin-right: 0;
+    margin-left: 160px;
+}
+
+.suggestion__card__text__img-wrapper--reverce {
+    left:auto;
+    right: -25px;
+}

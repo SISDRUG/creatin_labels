@@ -1,0 +1,234 @@
+@font-face {
+    font-family: "Jura";  
+    src: url("../fonts/Jura/JuraMedium.ttf") format("truetype"); 
+    font-style: normal; 
+    font-weight: normal;
+}
+
+
+body {
+    margin: 0;
+    background-color: #E8DBD1;
+    font-family: "Jura";
+    color: #63574F;
+}
+
+h1, h2, h3, p, ul{
+    margin: 0;
+    padding: 0;
+}
+
+img {
+    height: 100%;
+    width: 100%;
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #63574F;
+}
+
+a:visited {
+    color: #63574F;
+}
+
+
+
+.logo-wrapper {
+    width: 133px;
+    margin: 0 auto;
+}
+
+.logo {
+    height: 100%;
+}
+
+.content-container {
+    background-color: #D3B8A5;
+}
+
+.nav-wrapper {
+    height: 76px;
+
+    list-style-type: none;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.nav-link, .nav-link:visited {
+    text-decoration: none;
+    font-weight: 300;
+    font-size: 36px;
+    color: #000;
+    font-family: "Jura";
+}
+
+.nav__categories-wrapper {
+    height: 51px;
+}
+
+.nav-link--button {
+    border: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+
+/* Бургер меню */
+/* .button {
+    inline-size: 100%;
+    padding: 0.5lh 1.5lh;
+    font: inherit;
+    color: currentColor;
+    background-color: #f28482;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .button:hover,
+  .button:focus-visible {
+    background-color: #f5cac3;
+  }
+  
+  .menu {
+    position: relative;
+    display: grid;
+    margin-block-start: 0.5lh;
+    background-color: #f28482;
+  
+    overflow: hidden;
+    line-height: 0;
+    color: transparent;
+    transition: line-height 0.5s, color 0.5s;
+  }
+  
+  .menu-item {
+    overflow: hidden;
+  }
+  
+  .menu-link {
+    display: block;
+    padding: 0.5lh 80px;
+  }
+  
+  .menu-link:hover,
+  .menu-link:focus-visible {
+    background-color: #f5cac3;
+  }
+  
+  .button.active ~ .menu {
+    line-height: 1.2;
+    color: currentColor;
+  } */
+
+
+
+/* footer */
+.footer {
+    height: 268px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.footer__list-wrapper {
+    margin: 0 50px;
+    list-style-type: none;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer__info-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.footer__img-wrapper {
+    height: 51px;
+}
+
+.footer__info {
+    margin-left: 10px;
+    font-weight: 400;
+    font-size: 32px;
+}
+
+.footer__info--adress {
+    width: 253px;
+}
+
+.footer__info--mail {
+    font-size: 28px
+}
+
+.footer__img-wrapper--margin-left {
+    margin-left: 70px;
+}
+
+.form {
+    background-color: #D3B8A5;
+    border-radius: 10px;
+
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.form p {
+    text-align: center;
+}
+
+.input-field {
+    display: block;
+    border: 0;
+    border-radius: 10px;
+    height: 20px;
+    max-width: 400px;
+    background-color: #E8DBD1;
+    margin: 10px 100px;
+    padding: 15px;
+
+    font-family: Jura;
+    font-size: 25px;
+    font-weight: 400;
+    text-align: left;
+
+
+}
+
+.submit-button {
+    display: block;
+    margin: 20px auto;
+
+    border: 0;
+    border-radius: 10px;
+    background-color: #E8DBD1;
+    padding: 10px;
+    height: 50px;
+
+    font-family: Jura;
+    font-size: 25px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.form-head {
+    font-family: Jura;  
+    font-size: 25px;
+    font-weight: 400;
+    text-align: center;
+
+    margin-top: 20px;
+}
+
+.form-footer {
+    margin-bottom: 20px;
+}
