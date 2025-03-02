@@ -8,37 +8,189 @@
     <link rel="stylesheet" th:href="@{/css/work-page.css}">
     <!-- Подключаем Fabric.js напрямую -->
     <script src="https://unpkg.com/fabric@5.2.1/dist/fabric.min.js"></script>
+    <style>
+        .work-space__interface {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .work-space__interface-container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+        }
+        
+        .work-space__canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 600px;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .canvas-wrapper {
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        .controls-panel {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-left: 20px;
+        }
+        
+        .control-group {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        
+        .control-group-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+        
+        .shape-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        
+        .shape-btn {
+            padding: 5px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .shape-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .color-pickers {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .color-picker-container label {
+            min-width: 100px;
+        }
+        
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .img-wrapper-button {
+            width: 60px;
+            height: 60px;
+            padding: 2px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .img-wrapper-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 <header th:insert="blocks/header"></header>
 <section class="work-space container">
     <h2 class="work-space__head" th:if="${not #lists.isEmpty(images)}" th:text=${images[0].typeOfCategory.title}></h2>
     <div class="work-space__interface">
-        <div class="work-space__interface-container">
-            <!-- Панель инструментов редактора -->
-            <div class="work-space__editor-tools">
-                <button id="add-text-btn" class="submit-button" style="margin-right: 10px;">Добавить текст</button>
+        <!-- Контейнер для редактора холста -->
+        <div id="canvas-editor-root" class="work-space__canvas-container" 
+             th:attr="data-background=${not #lists.isEmpty(images) ? images[0].image.path + images[0].image.fileName : ''}">
+            <div class="canvas-wrapper">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+        
+        <!-- Панель управления справа -->
+        <div class="controls-panel">
+            <!-- Группа: Текст -->
+            <div class="control-group">
+                <div class="control-group-title">Текст</div>
+                <button id="add-text-btn" class="submit-button" style="width: 100%; margin-bottom: 10px;">Добавить текст</button>
                 <div class="color-picker-container">
                     <label for="text-color">Цвет текста:</label>
                     <input type="color" id="text-color" value="#000000"/>
                 </div>
             </div>
             
-            <!-- Контейнер для редактора холста -->
-            <div id="canvas-editor-root" class="work-space__canvas-container" 
-                 th:attr="data-background=${not #lists.isEmpty(images) ? images[0].image.path + images[0].image.fileName : ''}">
-                <canvas id="canvas"></canvas>
-            </div>
-            
-            <div class="work-space__control-panel">
-                <div class="work-space__img-list" th:each="imageForWork : ${images}">
-                    <button class="img-wrapper-button" th:attr="data-image-path=${imageForWork.image.path + imageForWork.image.fileName}">
-                        <img th:src="${imageForWork.image.path} + ${imageForWork.image.fileName}" alt="">
-                    </button>
+            <!-- Группа: Фигуры -->
+            <div class="control-group">
+                <div class="control-group-title">Фигуры</div>
+                <div class="shape-buttons">
+                    <button id="add-rect-btn" class="shape-btn">Прямоуг.</button>
+                    <button id="add-circle-btn" class="shape-btn">Круг</button>
+                    <button id="add-triangle-btn" class="shape-btn">Треуг.</button>
+                    <button id="add-star-btn" class="shape-btn">Звезда</button>
+                    <button id="add-heart-btn" class="shape-btn">Сердце</button>
+                </div>
+                <div class="color-pickers" style="margin-top: 10px;">
+                    <div class="color-picker-container">
+                        <label for="shape-fill-color">Цвет заливки:</label>
+                        <input type="color" id="shape-fill-color" value="#3498db"/>
+                    </div>
+                    <div class="color-picker-container">
+                        <label for="shape-stroke-color">Цвет обводки:</label>
+                        <input type="color" id="shape-stroke-color" value="#2980b9"/>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Группа: Изображения -->
+            <div class="control-group">
+                <div class="control-group-title">Изображения</div>
+                <label for="image-upload" class="submit-button" style="width: 100%; margin-bottom: 10px;">Загрузить изображение</label>
+                <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                
+                <div class="control-group-title" style="margin-top: 10px;">Шаблоны</div>
+                <div class="image-gallery">
+                    <div class="work-space__img-list" th:each="imageForWork : ${images}">
+                        <button class="img-wrapper-button" th:attr="data-image-path=${imageForWork.image.path + imageForWork.image.fileName}">
+                            <img th:src="${imageForWork.image.path} + ${imageForWork.image.fileName}" alt="">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Кнопка сохранения -->
+            <button id="save-label-btn" class="submit-button" type="button" style="width: 100%;">Сохранить этикетку</button>
         </div>
-        <button id="save-label-btn" class="submit-button submit-button--control-panel right-position" type="button">сохранить</button>
     </div>
 </section>
 <footer th:insert="blocks/footer"></footer>
@@ -48,10 +200,11 @@
         // Инициализация холста
         const canvasElement = document.getElementById('canvas');
         const canvasContainer = document.getElementById('canvas-editor-root');
+        const canvasWrapper = document.querySelector('.canvas-wrapper');
         
-        // Задаем размеры холста
-        const canvasWidth = 560;
-        const canvasHeight = 560;
+        // Базовые размеры холста по умолчанию
+        let canvasWidth = 650;
+        let canvasHeight = 650;
         
         // Создаем холст fabric.js
         const canvas = new fabric.Canvas('canvas', {
@@ -60,30 +213,136 @@
             backgroundColor: '#FFFFFF'
         });
         
+        // Функция для обновления размеров обертки канваса
+        function updateCanvasWrapperSize(width, height) {
+            if (canvasWrapper) {
+                canvasWrapper.style.width = width + 'px';
+                canvasWrapper.style.height = height + 'px';
+            }
+        }
+        
+        // Инициализируем обертку
+        updateCanvasWrapperSize(canvasWidth, canvasHeight);
+        
+        // Получаем значения цветов из пикеров
+        const getShapeColors = function() {
+            const fillColorPicker = document.getElementById('shape-fill-color');
+            const strokeColorPicker = document.getElementById('shape-stroke-color');
+            
+            return {
+                fill: fillColorPicker ? fillColorPicker.value : '#3498db',
+                stroke: strokeColorPicker ? strokeColorPicker.value : '#2980b9'
+            };
+        };
+        
         // Определяем глобальный объект для управления холстом
         window.canvasEditor = {
             canvas: canvas,
+            
+            // Метод для изменения размера холста
+            resizeCanvas: function(width, height) {
+                // Сохраняем текущий размер холста
+                const oldWidth = canvas.width;
+                const oldHeight = canvas.height;
+                
+                // Задаем новый размер
+                canvas.setWidth(width);
+                canvas.setHeight(height);
+                
+                // Обновляем размер обертки
+                updateCanvasWrapperSize(width, height);
+                
+                // Обновляем отображение
+                canvas.renderAll();
+                
+                console.log(`Размер холста изменен с ${oldWidth}x${oldHeight} на ${width}x${height}`);
+            },
             
             // Метод для установки фона
             setBackgroundImage: function(imageUrl) {
                 if (!imageUrl) return;
                 
-                fabric.Image.fromURL(
-                    imageUrl,
-                    function(img) {
-                        canvas.setBackgroundImage(
-                            img,
-                            function() {
-                                canvas.renderAll();
-                            },
-                            {
-                                scaleX: canvas.width / img.width,
-                                scaleY: canvas.height / img.height
+                console.log('Загрузка изображения шаблона:', imageUrl);
+                
+                // Создаем временное изображение для определения размеров
+                const tempImg = new Image();
+                tempImg.crossOrigin = 'anonymous';
+                
+                tempImg.onload = () => {
+                    console.log(`Исходный размер изображения: ${tempImg.width}x${tempImg.height}`);
+                    
+                    // Определяем максимальный размер для холста
+                    // Вычисляем доступную ширину контейнера
+                    const containerRect = canvasContainer.getBoundingClientRect();
+                    const maxCanvasWidth = Math.min(containerRect.width, window.innerWidth * 0.6) || 800;
+                    const maxCanvasHeight = window.innerHeight * 0.7; // 70% от высоты окна
+                    
+                    console.log(`Доступное пространство: ${maxCanvasWidth}x${maxCanvasHeight}`);
+                    
+                    // Вычисляем размер для сохранения пропорций
+                    let newWidth, newHeight;
+                    const aspectRatio = tempImg.width / tempImg.height;
+                    
+                    // Проверяем соотношение сторон
+                    if (aspectRatio > maxCanvasWidth / maxCanvasHeight) {
+                        // Изображение шире
+                        newWidth = Math.min(maxCanvasWidth, tempImg.width);
+                        newHeight = newWidth / aspectRatio;
+                    } else {
+                        // Изображение выше
+                        newHeight = Math.min(maxCanvasHeight, tempImg.height);
+                        newWidth = newHeight * aspectRatio;
+                    }
+                    
+                    // Устанавливаем минимальный размер
+                    newWidth = Math.max(300, Math.floor(newWidth));
+                    newHeight = Math.max(300, Math.floor(newHeight));
+                    
+                    console.log(`Новый размер холста: ${newWidth}x${newHeight}`);
+                    
+                    // Изменяем размер холста
+                    this.resizeCanvas(newWidth, newHeight);
+                    
+                    // Сначала удаляем существующий фон, если он есть
+                    if (canvas.backgroundImage) {
+                        canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+                    }
+                    
+                    // Устанавливаем изображение как фон
+                    fabric.Image.fromURL(
+                        imageUrl,
+                        function(img) {
+                            if (!img) {
+                                console.error('Ошибка создания изображения из URL');
+                                return;
                             }
-                        );
-                    },
-                    { crossOrigin: 'anonymous' }
-                );
+                            
+                            canvas.setBackgroundImage(
+                                img,
+                                canvas.renderAll.bind(canvas),
+                                {
+                                    scaleX: canvas.width / img.width,
+                                    scaleY: canvas.height / img.height,
+                                    originX: 'center',
+                                    originY: 'center',
+                                    left: canvas.width / 2,
+                                    top: canvas.height / 2
+                                }
+                            );
+                            
+                            console.log('Фоновое изображение установлено с масштабом:', 
+                                        canvas.width / img.width, canvas.height / img.height);
+                        },
+                        { crossOrigin: 'anonymous' }
+                    );
+                };
+                
+                tempImg.onerror = (err) => {
+                    console.error('Ошибка загрузки изображения шаблона:', err);
+                };
+                
+                // Сбрасываем кэш браузера для изображения, добавляя случайный параметр
+                tempImg.src = imageUrl + (imageUrl.includes('?') ? '&' : '?') + 'nocache=' + new Date().getTime();
             },
             
             // Метод для сохранения холста как изображения
@@ -107,8 +366,8 @@
                 const textColor = colorPicker ? colorPicker.value : '#000000';
                 
                 const text = new fabric.IText('Нажмите для редактирования', {
-                    left: 50,
-                    top: 50,
+                    left: canvas.width / 2 - 150,
+                    top: canvas.height / 2 - 12,
                     fontFamily: 'Arial',
                     fontSize: 24,
                     fill: textColor
@@ -117,6 +376,220 @@
                 canvas.add(text);
                 canvas.setActiveObject(text);
                 canvas.renderAll();
+            },
+            
+            // Метод для добавления прямоугольника
+            addRectangle: function() {
+                const colors = getShapeColors();
+                
+                const rect = new fabric.Rect({
+                    left: canvas.width / 2 - 50,
+                    top: canvas.height / 2 - 40,
+                    width: 100,
+                    height: 80,
+                    fill: colors.fill,
+                    stroke: colors.stroke,
+                    strokeWidth: 2,
+                    rx: 10,
+                    ry: 10
+                });
+                
+                canvas.add(rect);
+                canvas.setActiveObject(rect);
+                canvas.renderAll();
+            },
+            
+            // Метод для добавления круга
+            addCircle: function() {
+                const colors = getShapeColors();
+                
+                const circle = new fabric.Circle({
+                    left: canvas.width / 2 - 50,
+                    top: canvas.height / 2 - 50,
+                    radius: 50,
+                    fill: colors.fill,
+                    stroke: colors.stroke,
+                    strokeWidth: 2
+                });
+                
+                canvas.add(circle);
+                canvas.setActiveObject(circle);
+                canvas.renderAll();
+            },
+            
+            // Метод для добавления треугольника
+            addTriangle: function() {
+                const colors = getShapeColors();
+                
+                const triangle = new fabric.Triangle({
+                    left: canvas.width / 2 - 50,
+                    top: canvas.height / 2 - 50,
+                    width: 100,
+                    height: 100,
+                    fill: colors.fill,
+                    stroke: colors.stroke,
+                    strokeWidth: 2
+                });
+                
+                canvas.add(triangle);
+                canvas.setActiveObject(triangle);
+                canvas.renderAll();
+            },
+            
+            // Метод для добавления звезды
+            addStar: function() {
+                const colors = getShapeColors();
+                
+                const points = [
+                    {x: 0, y: -50},
+                    {x: 14, y: -20},
+                    {x: 47, y: -15},
+                    {x: 23, y: 7},
+                    {x: 29, y: 40},
+                    {x: 0, y: 25},
+                    {x: -29, y: 40},
+                    {x: -23, y: 7},
+                    {x: -47, y: -15},
+                    {x: -14, y: -20}
+                ];
+                
+                const star = new fabric.Polygon(points, {
+                    left: canvas.width / 2,
+                    top: canvas.height / 2,
+                    fill: colors.fill,
+                    stroke: colors.stroke,
+                    strokeWidth: 2
+                });
+                
+                canvas.add(star);
+                canvas.setActiveObject(star);
+                canvas.renderAll();
+            },
+            
+            // Метод для добавления сердца
+            addHeart: function() {
+                const colors = getShapeColors();
+                
+                const heart = new fabric.Path('M 272.70141,238.71731 \
+                                             C 206.46141,238.71731 152.70146,292.4773 152.70146,358.71731 \
+                                             C 152.70146,493.47282 288.63461,528.80461 381.26391,662.02535 \
+                                             C 468.83815,529.62199 609.82641,489.17075 609.82641,358.71731 \
+                                             C 609.82641,292.47731 556.06651,238.7173 489.82641,238.71731 \
+                                             C 441.77851,238.71731 400.42481,267.08774 381.26391,307.90481 \
+                                             C 362.10311,267.08773 320.74941,238.7173 272.70141,238.71731 z');
+                
+                heart.set({
+                    left: canvas.width / 2,
+                    top: canvas.height / 2,
+                    scaleX: 0.1,
+                    scaleY: 0.1,
+                    fill: colors.fill,
+                    stroke: colors.stroke,
+                    strokeWidth: 2
+                });
+                
+                canvas.add(heart);
+                canvas.setActiveObject(heart);
+                canvas.renderAll();
+            },
+            
+            // Метод для добавления изображения с устройства
+            addImageFromUpload: function(file) {
+                if (!file) {
+                    console.error('Файл не выбран');
+                    alert('Ошибка: файл не выбран');
+                    return;
+                }
+                
+                // Проверка типа файла
+                if (!file.type.match('image.*')) {
+                    console.error('Выбранный файл не является изображением');
+                    alert('Пожалуйста, выберите файл изображения');
+                    return;
+                }
+                
+                console.log('Начало загрузки изображения:', file.name);
+                
+                // Можно добавить индикатор загрузки здесь
+                const loadingIndicator = document.createElement('div');
+                loadingIndicator.id = 'loading-indicator';
+                loadingIndicator.style.position = 'absolute';
+                loadingIndicator.style.top = '50%';
+                loadingIndicator.style.left = '50%';
+                loadingIndicator.style.transform = 'translate(-50%, -50%)';
+                loadingIndicator.style.padding = '10px 20px';
+                loadingIndicator.style.background = 'rgba(0,0,0,0.5)';
+                loadingIndicator.style.color = 'white';
+                loadingIndicator.style.borderRadius = '5px';
+                loadingIndicator.style.zIndex = '1000';
+                loadingIndicator.textContent = 'Загрузка изображения...';
+                canvasContainer.appendChild(loadingIndicator);
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    console.log('Файл прочитан, создаем изображение');
+                    const imgUrl = event.target.result;
+                    
+                    fabric.Image.fromURL(imgUrl, function(img) {
+                        // Удаляем индикатор загрузки
+                        const indicator = document.getElementById('loading-indicator');
+                        if (indicator) indicator.remove();
+                        
+                        console.log('Изображение создано:', img ? 'успешно' : 'ошибка');
+                        
+                        if (!img) {
+                            console.error('Не удалось создать изображение');
+                            alert('Ошибка при создании изображения');
+                            return;
+                        }
+                        
+                        // Масштабируем изображение, если оно слишком большое
+                        const maxSize = Math.min(canvas.width, canvas.height) * 0.5;
+                        if (img.width > maxSize || img.height > maxSize) {
+                            const scale = Math.min(maxSize / img.width, maxSize / img.height);
+                            img.scale(scale);
+                        }
+                        
+                        // Улучшенное позиционирование
+                        const scaledWidth = img.width * img.scaleX;
+                        const scaledHeight = img.height * img.scaleY;
+                        
+                        img.set({
+                            left: canvas.width / 2,
+                            top: canvas.height / 2,
+                            originX: 'center',
+                            originY: 'center'
+                        });
+                        
+                        // Устанавливаем обработчики событий для изображения
+                        img.on('selected', function() {
+                            console.log('Изображение выбрано');
+                        });
+                        
+                        console.log('Добавляем изображение на холст');
+                        canvas.add(img);
+                        canvas.setActiveObject(img);
+                        canvas.renderAll();
+                        console.log('Изображение добавлено на холст');
+                        
+                        // Сбрасываем input файла для возможности повторной загрузки того же файла
+                        const uploadInput = document.getElementById('image-upload');
+                        if (uploadInput) uploadInput.value = '';
+                    }, { crossOrigin: 'anonymous' });
+                };
+                
+                reader.onerror = function(error) {
+                    console.error('Ошибка при чтении файла:', error);
+                    alert('Ошибка при чтении файла');
+                    
+                    // Удаляем индикатор загрузки при ошибке
+                    const indicator = document.getElementById('loading-indicator');
+                    if (indicator) indicator.remove();
+                };
+                
+                console.log('Начинаем чтение файла как Data URL');
+                reader.readAsDataURL(file);
             }
         };
         
@@ -149,6 +622,75 @@
             });
         }
         
+        // Обработчики кнопок добавления фигур
+        const addRectBtn = document.getElementById('add-rect-btn');
+        if (addRectBtn) {
+            addRectBtn.addEventListener('click', function() {
+                if (window.canvasEditor) {
+                    window.canvasEditor.addRectangle();
+                }
+            });
+        }
+        
+        const addCircleBtn = document.getElementById('add-circle-btn');
+        if (addCircleBtn) {
+            addCircleBtn.addEventListener('click', function() {
+                if (window.canvasEditor) {
+                    window.canvasEditor.addCircle();
+                }
+            });
+        }
+        
+        const addTriangleBtn = document.getElementById('add-triangle-btn');
+        if (addTriangleBtn) {
+            addTriangleBtn.addEventListener('click', function() {
+                if (window.canvasEditor) {
+                    window.canvasEditor.addTriangle();
+                }
+            });
+        }
+        
+        const addStarBtn = document.getElementById('add-star-btn');
+        if (addStarBtn) {
+            addStarBtn.addEventListener('click', function() {
+                if (window.canvasEditor) {
+                    window.canvasEditor.addStar();
+                }
+            });
+        }
+        
+        const addHeartBtn = document.getElementById('add-heart-btn');
+        if (addHeartBtn) {
+            addHeartBtn.addEventListener('click', function() {
+                if (window.canvasEditor) {
+                    window.canvasEditor.addHeart();
+                }
+            });
+        }
+        
+        // Обработчик загрузки изображения с устройства
+        const uploadInput = document.getElementById('image-upload');
+        if (uploadInput) {
+            uploadInput.addEventListener('change', function(e) {
+                console.log('Файл выбран:', this.files ? 'Да' : 'Нет');
+                if (window.canvasEditor && this.files && this.files[0]) {
+                    console.log('Передаем файл в метод addImageFromUpload');
+                    window.canvasEditor.addImageFromUpload(this.files[0]);
+                } else {
+                    console.error('Ошибка при выборе файла: canvasEditor или файл отсутствует');
+                }
+            });
+            
+            // Добавляем обработчик для кнопки-метки
+            const uploadLabel = document.querySelector('label[for="image-upload"]');
+            if (uploadLabel) {
+                uploadLabel.addEventListener('click', function() {
+                    console.log('Нажата кнопка загрузки изображения');
+                    uploadInput.click();
+                });
+            }
+        }
+        
         // Обработчик кнопки сохранения
         const saveBtn = document.getElementById('save-label-btn');
         if (saveBtn) {
@@ -170,6 +712,63 @@
                 }
             });
         }
+        
+        // Изменение цвета заливки фигуры при выборе в палитре
+        const fillColorPicker = document.getElementById('shape-fill-color');
+        if (fillColorPicker) {
+            fillColorPicker.addEventListener('change', function() {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.fill) {
+                    activeObject.set('fill', this.value);
+                    canvas.renderAll();
+                }
+            });
+        }
+        
+        // Изменение цвета обводки фигуры при выборе в палитре
+        const strokeColorPicker = document.getElementById('shape-stroke-color');
+        if (strokeColorPicker) {
+            strokeColorPicker.addEventListener('change', function() {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.stroke) {
+                    activeObject.set('stroke', this.value);
+                    canvas.renderAll();
+                }
+            });
+        }
+        
+        // Обработчик выбора объекта на холсте для обновления цветов в пикерах
+        canvas.on('selection:created', updateColorPickersFromSelection);
+        canvas.on('selection:updated', updateColorPickersFromSelection);
+        
+        function updateColorPickersFromSelection(e) {
+            const activeObject = e.selected[0];
+            if (!activeObject) return;
+            
+            // Обновляем пикер цвета текста, если выбран текст
+            if (activeObject.type === 'i-text' && colorPicker) {
+                colorPicker.value = activeObject.fill || '#000000';
+            }
+            
+            // Обновляем пикеры цветов фигур, если выбрана фигура
+            if (fillColorPicker && activeObject.fill && activeObject.type !== 'i-text') {
+                fillColorPicker.value = activeObject.fill;
+            }
+            
+            if (strokeColorPicker && activeObject.stroke) {
+                strokeColorPicker.value = activeObject.stroke;
+            }
+        }
+        
+        // Адаптация размеров при изменении размера окна
+        window.addEventListener('resize', function() {
+            if (canvasContainer && backgroundImagePath) {
+                // Перезагружаем фон с новыми размерами контейнера
+                setTimeout(function() {
+                    window.canvasEditor.setBackgroundImage(backgroundImagePath);
+                }, 300);
+            }
+        });
     });
 </script>
 </body>
