@@ -493,24 +493,25 @@
                 canvas.renderAll();
             },
             
-            // Метод для добавления изображения с устройства
+            // Метод для добавления изображения с устройства - альтернативный подход
             addImageFromUpload: function(file) {
+                console.log('ОТЛАДКА: Начало метода addImageFromUpload');
                 if (!file) {
-                    console.error('Файл не выбран');
+                    console.error('ОТЛАДКА: Файл не выбран');
                     alert('Ошибка: файл не выбран');
                     return;
                 }
                 
                 // Проверка типа файла
                 if (!file.type.match('image.*')) {
-                    console.error('Выбранный файл не является изображением');
+                    console.error('ОТЛАДКА: Выбранный файл не является изображением');
                     alert('Пожалуйста, выберите файл изображения');
                     return;
                 }
                 
-                console.log('Начало загрузки изображения:', file.name);
+                console.log('ОТЛАДКА: Тип файла проверен, начинаем загрузку');
                 
-                // Можно добавить индикатор загрузки здесь
+                // Создаем простой индикатор загрузки
                 const loadingIndicator = document.createElement('div');
                 loadingIndicator.id = 'loading-indicator';
                 loadingIndicator.style.position = 'absolute';
@@ -527,60 +528,70 @@
                 
                 const reader = new FileReader();
                 
-                reader.onload = function(event) {
-                    console.log('Файл прочитан, создаем изображение');
-                    const imgUrl = event.target.result;
+                // Наш обработчик загрузки файла
+                reader.onload = (e) => {
+                    console.log('ОТЛАДКА: FileReader загрузил файл');
+                    const imgURL = e.target.result;
                     
-                    fabric.Image.fromURL(imgUrl, function(img) {
+                    // Прямое использование fabric.Image.fromURL для большей совместимости
+                    fabric.Image.fromURL(imgURL, function(img) {
+                        console.log('ОТЛАДКА: fabric.Image.fromURL завершен, получен объект:', !!img);
+                        
+                        if (!img) {
+                            console.error('ОТЛАДКА: Не удалось создать объект изображения');
+                            const indicator = document.getElementById('loading-indicator');
+                            if (indicator) indicator.remove();
+                            return;
+                        }
+                        
                         // Удаляем индикатор загрузки
                         const indicator = document.getElementById('loading-indicator');
                         if (indicator) indicator.remove();
                         
-                        console.log('Изображение создано:', img ? 'успешно' : 'ошибка');
-                        
-                        if (!img) {
-                            console.error('Не удалось создать изображение');
-                            alert('Ошибка при создании изображения');
-                            return;
-                        }
-                        
                         // Масштабируем изображение, если оно слишком большое
                         const maxSize = Math.min(canvas.width, canvas.height) * 0.5;
+                        const scale = Math.min(
+                            maxSize / img.width,
+                            maxSize / img.height
+                        );
+                        
                         if (img.width > maxSize || img.height > maxSize) {
-                            const scale = Math.min(maxSize / img.width, maxSize / img.height);
                             img.scale(scale);
                         }
                         
-                        // Улучшенное позиционирование
-                        const scaledWidth = img.width * img.scaleX;
-                        const scaledHeight = img.height * img.scaleY;
-                        
+                        // Устанавливаем позицию и настройки изображения
                         img.set({
                             left: canvas.width / 2,
                             top: canvas.height / 2,
                             originX: 'center',
-                            originY: 'center'
+                            originY: 'center',
+                            cornerColor: 'rgba(0,0,255,0.5)',
+                            cornerSize: 10,
+                            transparentCorners: false,
+                            selectable: true
                         });
                         
-                        // Устанавливаем обработчики событий для изображения
-                        img.on('selected', function() {
-                            console.log('Изображение выбрано');
-                        });
+                        console.log('ОТЛАДКА: Параметры установлены:', 
+                                   'размер:', img.width, 'x', img.height,
+                                   'масштаб:', img.scaleX, 'x', img.scaleY);
                         
-                        console.log('Добавляем изображение на холст');
+                        console.log('ОТЛАДКА: Добавляем изображение на холст');
+                        // Добавляем созданное изображение на холст
                         canvas.add(img);
                         canvas.setActiveObject(img);
                         canvas.renderAll();
-                        console.log('Изображение добавлено на холст');
+                        
+                        console.log('ОТЛАДКА: Изображение добавлено на холст');
+                        console.log('ОТЛАДКА: Количество объектов на холсте:', canvas.getObjects().length);
                         
                         // Сбрасываем input файла для возможности повторной загрузки того же файла
                         const uploadInput = document.getElementById('image-upload');
                         if (uploadInput) uploadInput.value = '';
-                    }, { crossOrigin: 'anonymous' });
+                    });
                 };
                 
                 reader.onerror = function(error) {
-                    console.error('Ошибка при чтении файла:', error);
+                    console.error('ОТЛАДКА: Ошибка при чтении файла:', error);
                     alert('Ошибка при чтении файла');
                     
                     // Удаляем индикатор загрузки при ошибке
@@ -588,7 +599,7 @@
                     if (indicator) indicator.remove();
                 };
                 
-                console.log('Начинаем чтение файла как Data URL');
+                console.log('ОТЛАДКА: Начинаем чтение файла как Data URL');
                 reader.readAsDataURL(file);
             }
         };
@@ -672,12 +683,24 @@
         const uploadInput = document.getElementById('image-upload');
         if (uploadInput) {
             uploadInput.addEventListener('change', function(e) {
-                console.log('Файл выбран:', this.files ? 'Да' : 'Нет');
-                if (window.canvasEditor && this.files && this.files[0]) {
-                    console.log('Передаем файл в метод addImageFromUpload');
-                    window.canvasEditor.addImageFromUpload(this.files[0]);
-                } else {
-                    console.error('Ошибка при выборе файла: canvasEditor или файл отсутствует');
+                console.log('ОТЛАДКА: Событие выбора файла сработало');
+                console.log('ОТЛАДКА: Файл выбран:', this.files ? 'Да' : 'Нет');
+                
+                try {
+                    if (window.canvasEditor && this.files && this.files[0]) {
+                        console.log('ОТЛАДКА: Передаем файл в метод addImageFromUpload:', 
+                                   'имя файла:', this.files[0].name, 
+                                   'размер:', this.files[0].size, 
+                                   'тип:', this.files[0].type);
+                        window.canvasEditor.addImageFromUpload(this.files[0]);
+                    } else {
+                        console.error('ОТЛАДКА: Ошибка при выборе файла: canvasEditor или файл отсутствует');
+                        if (!window.canvasEditor) console.error('ОТЛАДКА: canvasEditor не определен');
+                        if (!this.files) console.error('ОТЛАДКА: files не определен');
+                        if (this.files && !this.files[0]) console.error('ОТЛАДКА: files[0] не определен');
+                    }
+                } catch (e) {
+                    console.error('ОТЛАДКА: Ошибка в обработчике события change:', e);
                 }
             });
             
@@ -685,10 +708,11 @@
             const uploadLabel = document.querySelector('label[for="image-upload"]');
             if (uploadLabel) {
                 uploadLabel.addEventListener('click', function() {
-                    console.log('Нажата кнопка загрузки изображения');
-                    uploadInput.click();
+                    console.log('ОТЛАДКА: Нажата кнопка загрузки изображения');
                 });
             }
+        } else {
+            console.error('ОТЛАДКА: Элемент image-upload не найден!');
         }
         
         // Обработчик кнопки сохранения
