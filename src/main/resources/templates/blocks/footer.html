@@ -6,7 +6,9 @@
                     <img th:src="@{/img/pointer.png}" alt="Указатель">
                 </div>
                 <p class="footer__info footer__info--adress">
-                    Главный оффис: г.Гродно ул. Лиможа 18 оф.189
+                    <a href="https://www.google.com/maps/search/?api=1&query=Гродно,+ул.+Лиможа+18,+оф.189" target="_blank">
+                        Главный офис: г. Гродно ул. Лиможа 18 оф.189
+                    </a>
                 </p>
             </div>
         </li>
@@ -17,10 +19,10 @@
                 </div>
                 <div>
                     <p class="footer__info">
-                        +375 33 464 81 36
+                        <a href="tel:+375334648136">+375 33 464 81 36</a>
                     </p>
                     <p class="footer__info">
-                        +375 44 467 83 41
+                        <a href="tel:+375444678341">+375 44 467 83 41</a>
                     </p>
                 </div>
             </div>
@@ -28,16 +30,22 @@
                 <div class="footer__img-wrapper">
                     <img th:src="@{/img/mail.png}" alt="Почта">
                 </div>
-                <p class="footer__info footer__info--mail">asyakudryavtseva17@gmail.com</p>
+                <p class="footer__info footer__info--mail">
+                    <a href="mailto:asyakudryavtseva17@gmail.com">asyakudryavtseva17@gmail.com</a>
+                </p>
             </div>
         </li>
         <li>
             <div class="footer__info-wrapper">
                 <div class="footer__img-wrapper">
-                    <img th:src="@{/img/instagram.png}" alt="Instagram">
+                    <a href="https://www.instagram.com/kudryavtsevaay/" target="_blank">
+                        <img th:src="@{/img/instagram.png}" alt="Instagram">
+                    </a>
                 </div>
                 <div class="footer__img-wrapper footer__img-wrapper--margin-left">
-                    <img th:src="@{/img/telegram.png}" alt="Telegram">
+                    <a href="tg://resolve?domain=kudryavtsevaay" target="_blank">
+                        <img th:src="@{/img/telegram.png}" alt="Telegram">
+                    </a>
                 </div>
             </div>
         </li>
